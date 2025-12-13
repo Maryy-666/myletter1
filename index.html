@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sürpriz Zarf</title>
+    <style>
+        /* --- CSS BAŞLANGICI --- */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #333; /* Arka planı koyu yaptım ki zarf belli olsun */
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        /* ZARF KAPLAYICISI */
+        .envelope-container {
+            position: relative;
+            width: 300px;  /* Başlangıç boyutu daha belirgin */
+            height: 200px;
+            background-color: transparent;
+            /* Animasyonlar */
+            transform: scale(0.5); /* Küçük başla */
+            transition: transform 5s ease-in-out;
+            cursor: pointer;
+        }
+
+        /* Büyüme Sınıfı */
+        .envelope-container.is-growing {
+            transform: scale(1.4); /* Ekrana sığacak kadar büyü */
+        }
+
+        /* Zarfın Gövdesi (Arkası) */
+        .envelope-body {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #d65a5a; /* Koyu Kırmızı */
+            z-index: 1;
+        }
+
+        /* Zarfın Kapakları */
+        .flap {
+            position: absolute;
+            width: 0;
+            height: 0;
+            z-index: 3; /* Kağıdın üzerinde durmalı */
+        }
+
+        /* Sol Kapak */
+        .flap.left {
+            top: 0;
+            left: 0;
+            border-top: 100px solid transparent; /* Yükseklik / 2 */
+            border-bottom: 100px solid transparent;
+            border-left: 150px solid #e07474; /* Genişlik / 2 - Daha açık kırmızı */
+        }
+
+        /* Sağ Kapak */
+        .flap.right {
+            top: 0;
+            right: 0;
+            border-top: 100px solid transparent;
+            border-bottom: 100px solid transparent;
+            border-right: 150px solid #e07474;
+        }
+
+        /* Alt Kapak */
+        .flap.bottom {
+            bottom: 0;
+            left: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 110px solid #e88585; /* En açık kırmızı */
+        }
+
+        /* Üst Kapak (Açılacak Olan) */
+        .flap.top {
+            top: 0;
+            left: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 110px solid #c94c4c; /* Kapak rengi */
+            transform-origin: top;
+            transition: transform 1s ease-in-out, z-index 1s; /* Açılma animasyonu */
+            z-index: 4; /* En üstte */
+        }
+
+        /* KAĞIT (MEKTUP) */
+        .paper {
+            position: absolute;
+            width: 260px;
+            height: 200px;
+            background-color: white;
+            left: 20px;
+            bottom: 0; /* Zarfın dibinde */
+            z-index: 2; /* Kapakların altında, gövdenin üstünde */
+            transition: transform 1s ease-out 0.5s; /* Gecikmeli çıkış */
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Kağıt İçeriği */
+        .paper h2 {
+            margin: 0 0 10px;
+            font-size: 12px;
+            color: #b30101;
+        }
+        .paper p {
+            font-size: 10px;
+            color: #302f2f;
+            margin: 5px 0;
+        }
+
+        /* --- ANİMASYON TETİKLEYİCİLERİ --- */
+        
+        /* Zarf Açıldığında */
+        .envelope-container.open .flap.top {
+            transform: rotateX(180deg);
+            z-index: 1; /* Açılınca arkaya geçsin */
+        }
+
+        .envelope-container.open .paper {
+            transform: translateY(-120px); /* Kağıt yukarı çıksın */
+            z-index: 5; /* Her şeyin üstüne çıksın */
+        }
+
+        /* --- KALP YAĞMURU --- */
+        .heart {
+            position: fixed;
+            top: -50px;
+            width: 20px;
+            height: 20px;
+            background: #570110;
+            transform: rotate(45deg);
+            z-index: 999;
+            animation: fall linear forwards; 
+        }
+        
+        .heart::before, .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #570110;
+            border-radius: 50%;
+        }
+        .heart::before { top: -10px; left: 0; }
+        .heart::after { left: -10px; top: 0; } /* Düzeltme: left pozisyonu */
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(45deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="envelope-container" id="envelope">
+        
+        <div class="envelope-body"></div>
+        
+        <div class="paper">
+            <h2>MERHABAA SEVGİLİİİMMM</h2>
+            <p>Seni çooooooook seviyorum. Sadece bunu hatırlatmak istedim ve son zamanlarda çok salakça davrandığım için özür dilerim. Biraz psikolojim kötüye gidiyor ve bunu sana yansıtmaya başladım. Ama unutma ki sen her saniye aklımdasın ve sana çok değer veriyorum. <3 💌 Not: şimdi neden benle konuşmadın da bunu yaptın diyeceksin çünkü duygularımı açıklamakta ve konuşmakta aşırı derecede zorlanıyorum. (bir de küçük bir dip not... SANA  AŞIĞIMMMM <3)</p>
+            <p> Sevgilerleee Maryyy (muck muck)</p>
+        </div>
+
+        <div class="flap left"></div>
+        <div class="flap right"></div>
+        <div class="flap bottom"></div>
+        <div class="flap top" id="topFlap"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const envelope = document.getElementById('envelope');
+
+            // 1. ZARF BÜYÜME (Sayfa yüklenince hemen başlar)
+            // Tarayıcı render etsin diye çok kısa bir gecikme veriyoruz
+            setTimeout(() => {
+                envelope.classList.add('is-growing');
+            }, 100);
+
+            // 2. ZARF AÇILMA (5 Saniye Sonra)
+            setTimeout(() => {
+                envelope.classList.add('open');
+                
+                // 3. KALP YAĞMURU (Zarf açıldıktan 2 saniye sonra - Toplam 7. saniye)
+                setTimeout(() => {
+                    startHearts();
+                }, 2000);
+
+            }, 5000);
+        });
+
+        function startHearts() {
+            // Sonsuz döngüde kalp üret
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                
+                // Rastgele pozisyon
+                heart.style.left = Math.random() * 100 + "vw";
+                
+                // Rastgele hız (2s ile 5s arası)
+                const duration = Math.random() * 3 + 2;
+                heart.style.animationDuration = duration + "s";
+                
+                document.body.appendChild(heart);
+
+                // Ekranı şişirmesin diye düşen kalbi sil
+                setTimeout(() => {
+                    heart.remove();
+                }, duration * 1000);
+
+            }, 100); // Her 100 milisaniyede bir kalp
+        }
+    </script>
+</body>
+</html>
